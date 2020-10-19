@@ -9,6 +9,27 @@ class App(Frame):
         self.master.geometry("800x600")
         self.config(bg="white")
         self.master.config(bg="white")
+        self.all_here()
+
+    def all_here(self):
+
+        menubar = Menu(self)
+
+        insertmenu = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="insert", menu=insertmenu)
+        insertmenu.add_command(label="new date", command=self.insert_date)
+
+        helpmenu = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="help", menu=helpmenu)
+        helpmenu.add_command(label="about", command=self.about_TEV)
+
+        self.master.config(menu=menubar)
+
+    def insert_date(self):
+        pass
+
+    def about_TEV(self):
+        pass
 
 root = Tk()
 
