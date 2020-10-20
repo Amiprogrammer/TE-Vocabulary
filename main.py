@@ -8,8 +8,6 @@ db_connection = mysql.connector.connect(
                     database="te_vocabulary"
                 )
 
-print(db_connection)
-
 class App(Frame):
 
     def __init__(self,master=None):
@@ -64,7 +62,7 @@ class App(Frame):
 
         go_img = PhotoImage(file="img/file2.png")
 
-        ok = Button(toolbars3, image=go_img, compound=CENTER, width=45, height=35, command=self.destroy)
+        ok = Button(toolbars3, image=go_img, compound=CENTER, width=45, height=35, command=self.get_entry)
         ok.go_img = go_img
         ok.grid(row=1, column=1, padx=20)
 
@@ -79,6 +77,13 @@ class App(Frame):
 
     def about_TEV(self):
         pass
+
+    def get_entry(self):
+        self.user_entry.focus_set()
+        input = self.user_entry.get()
+
+        print(input)
+
 
 root = Tk()
 
