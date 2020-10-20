@@ -1,4 +1,14 @@
 from tkinter import *
+import mysql.connector
+
+db_connection = mysql.connector.connect(
+                    host="localhost",
+                    username="root",
+                    password="root",
+                    database="te_vocabulary"
+                )
+
+print(db_connection)
 
 class App(Frame):
 
