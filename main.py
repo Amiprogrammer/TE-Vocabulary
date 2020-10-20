@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import mysql.connector
 
 db_connection = mysql.connector.connect(
@@ -7,6 +8,8 @@ db_connection = mysql.connector.connect(
                     password="root",
                     database="te_vocabulary"
                 )
+
+mycursor = db_connection.cursor()
 
 class App(Frame):
 
@@ -51,26 +54,35 @@ class App(Frame):
         toolbars2["bg"] = "white"
         toolbars2.pack(side=TOP, fill=X)
 
-        find_lbl = Label(toolbars2, text="Find your vocabulary with keyword(s) tetun !", anchor=W, justify=LEFT, bg="white", font=("Calibri",18))
+        find_lbl = Label(toolbars2, text="Find your vocabulary with keyword(s) tetun !", anchor=W, justify=LEFT, bg="white", font=("Calibri Italic",16))
         find_lbl.grid(row=0, pady=40)
 
         toolbars3 = Frame(self, bg="white")
         toolbars3.pack(fill=X, side=TOP)
 
-        self.user_entry = Entry(toolbars3, font=("calibri",16), width=32, bg="grey", justify=CENTER)
-        self.user_entry.grid(row=1, column=0)
+        self.user_entry = Entry(toolbars3, justify=CENTER, bg="grey", font=("Calibri",16), width=28)
+        self.user_entry.grid(row=0, column=0)
 
-        go_img = PhotoImage(file="img/file2.png")
+        right_arrow = PhotoImage(file="img/file2.png")
 
-        ok = Button(toolbars3, image=go_img, compound=CENTER, width=45, height=35, command=self.get_entry)
-        ok.go_img = go_img
-        ok.grid(row=1, column=1, padx=20)
+        confirm_button = Button(toolbars3, image=right_arrow, width=48, height=25, command=self.get_entry)
+        confirm_button.right_arrow = right_arrow
+        confirm_button.grid(row=0, column=1, padx=10)
 
-        result_img = PhotoImage(file=r"img\file3.png")
+        toolbars4 = Frame(self, bg="white")
+        toolbars4.pack(fill=X, side=TOP, pady=20)
 
-        self.results = Label(toolbars3, text="Result Here!", font=("Calibri",36), image=result_img, compound=TOP, bg="white", width=250, height=160)
-        self.results.result_img = result_img
-        self.results.grid(row=2, columnspan=2, pady=100)
+        tetun_index = Label(toolbars4, text="Tetun", font=("Calibri",24), bg="white")
+        tetun_index.grid(row=0, column=0)
+
+        english_index = Label(toolbars4, text="English", font=("Calibri",24), bg="white")
+        english_index.grid(row=0, column=1, padx=60)
+
+        self.tetun = Label(toolbars4, text="", font=("Calibri",24), bg="white")
+        self.tetun.grid(row=1, column=0)
+
+        self.english = Label(toolbars4, text="", font=("Calibri",24), bg="white")
+        self.english.grid(row=1, column=1, padx=60)
 
     def insert_date(self):
         pass
@@ -79,10 +91,32 @@ class App(Frame):
         pass
 
     def get_entry(self):
-        self.user_entry.focus_set()
-        input = self.user_entry.get()
+        try:
+            self.user_entry.focus_set()
+            input = self.user_entry.get()
 
-        print(input)
+            if( len(input) == 0 ):
+                messagebox.showwarning("TE Vocabulary",
+                                "Please Insert Something!")
+            elif( len(input) > 0 ):
+                sql = "SELECT tetun,english FROM words WHERE tetun = %s"
+                val = (input.lower(),)
+
+                mycursor.execute(sql,val)
+                result = mycursor.fetchall()
+                
+                if( mycursor.rowcount > 0):
+                    self.tetun.config(text=result[0][0], fg="black")
+                    self.english.config(text=result[0][1], fg="black")
+
+                    self.user_entry.delete(0, END)
+                else:
+                    self.tetun.config(text="la iha!", fg="red")
+                    self.english.config(text="not exists!", fg="red")
+
+                    self.user_entry.delete(0, END)
+        except Exception as err:
+            messagebox.showerror("TE Vocabulary",f"ERROR: {err}")
 
 
 root = Tk()
