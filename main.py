@@ -105,16 +105,39 @@ class App(Frame):
         english_lbl = Label(form_insert, text="English", font=("Calibri",16), bg="grey")
         english_lbl.grid(row=0, column=1)
 
-        tetun_entry = Entry(form_insert, font=("Calibri",16), justify=CENTER)
-        tetun_entry.grid(row=1, column=0, padx=8)
+        self.new_tetun_entry = Entry(form_insert, font=("Calibri",16), justify=CENTER)
+        self.new_tetun_entry.grid(row=1, column=0, padx=8)
 
-        english_entry = Entry(form_insert, font=("Calibri",16), justify=CENTER)
-        english_entry.grid(row=1, column=1, padx=8)
+        self.new_english_entry = Entry(form_insert, font=("Calibri",16), justify=CENTER)
+        self.new_english_entry.grid(row=1, column=1, padx=8)
 
         Button(form_insert, text="OK", font=("Cooper Black",12), bg="blue", fg="white", command=self.get_in_date).grid(row=2, columnspan=2, pady=20)
 
     def get_in_date(self):
-        pass
+        self.new_tetun_entry.focus_set()
+        self.new_english_entry.focus_set()
+
+        new_tetun = self.new_tetun_entry.get()
+        new_english = self.new_english_entry.get()
+
+        if( len(new_tetun) == 0 or len(new_english) == 0 ):
+            messagebox.showwarning("TE Vocabulary",
+                                "please insert a value in prompt!")
+            self.new_tetun_entry.delete(0, END)
+            self.new_english_entry.delete(0, END)
+        else:
+            sql = "INSERT INTO words (tetun,english) VALUES (%s,%s)"
+            val = (new_tetun.lower(),new_english.lower())
+            mycursor.execute(sql,val)
+
+            db_connection.commit()
+
+            if( mycursor.rowcount > 0 ):
+                messagebox.showinfo("TE Vocabulary",
+                            "Success!\n1 record(s) inserted.")
+            else:
+                messagebox.showwarning("TE Vocabulary",
+                            "Faill!\n1 record(s) not inserted.")
 
     def about_TEV(self):
         about_window = Toplevel()
