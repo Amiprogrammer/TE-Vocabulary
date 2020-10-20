@@ -88,7 +88,35 @@ class App(Frame):
         pass
 
     def about_TEV(self):
-        pass
+        about = Toplevel()
+        about.title("About TE Vocabulary")
+        about.geometry("400x350")
+
+        photo = PhotoImage(file="img/file1.png")
+
+        te_img = Label(about, image=photo)
+        te_img.photo = photo
+        te_img.pack()
+
+        self.te_lbl = Label(about, text="TE Vocabulary", font=("Calibri",24))
+        self.te_lbl.pack(pady=5)
+
+        var = StringVar()
+        var.set("This program built with Python V3.8.2 programming languague and Tkinter V8.5 Module with associate MySQL database server to develop this program\n\n\n(C) 2020. <> by Juliao Martins")
+
+        message = Message(about, textvariable=var, font=("Calibri Bold",8), width=180, justify=CENTER)
+        message.pack(pady=10)
+
+        Button(about, text="Dismiss", bg="red", fg="black", command=about.destroy).pack()
+
+        self.te_lbl.bind("<Enter>",self.change_color)
+        self.te_lbl.bind("<Leave>",self.default_color)
+
+    def change_color(self,event):
+        self.te_lbl.config(fg="lightgreen")
+
+    def default_color(self,event):
+        self.te_lbl.config(fg="black")
 
     def get_entry(self):
         try:
@@ -104,7 +132,7 @@ class App(Frame):
 
                 mycursor.execute(sql,val)
                 result = mycursor.fetchall()
-                
+
                 if( mycursor.rowcount > 0):
                     self.tetun.config(text=result[0][0], fg="black")
                     self.english.config(text=result[0][1], fg="black")
